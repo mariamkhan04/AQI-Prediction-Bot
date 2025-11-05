@@ -1,8 +1,15 @@
+# Core dependencies
+python-dotenv
 requests
 pandas
 numpy
-python-dotenv
+
+# Visualization (used in EDA / data understanding)
 matplotlib
-seaborn
+
+# Machine learning utilities
 scikit-learn
 joblib
+
+# Hopsworks Feature Store SDK
+hopsworks==4.2.9
