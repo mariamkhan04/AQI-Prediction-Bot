@@ -2,11 +2,11 @@ name: Daily Model Training Pipeline
 
 on:
   schedule:
-    - cron: "45 20 * * *"   # Runs daily 15 mins after feature pipeline
-  workflow_dispatch:         # Allow manual trigger
+    - cron: "45 20 * * *"   # Runs daily 15 mins after feature pipeline (1:45 AM PKT)
+  workflow_dispatch:         # Allow manual trigger from GitHub Actions tab
 
 jobs:
-  train-and-predict:
+  train-model:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,19 +24,11 @@ jobs:
           pip install -r requirements.txt
           pip install hopsworks[python]==4.2.9 xgboost joblib scikit-learn pandas numpy requests python-dotenv
 
-      - name: Run Training Pipeline
+      - name: Run Model Training
         env:
           HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
           SAVE_LOCAL: "false"
         run: |
-          echo "Starting Model Training..."
+          echo "Starting Daily Model Training..."
           python src/train_model.py
-          echo "Model Training Completed."
-
-      - name: Run Prediction & Evaluation
-        env:
-          HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
-          SAVE_LOCAL: "false"
-        run: |
-          echo "Starting Prediction & Evaluation..."
-          python src/predict_evaluate.py
+          echo "✅ Model Training Completed Successfully!"
