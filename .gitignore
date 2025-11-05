@@ -6,3 +6,4 @@ data/raw/
 *.sqlite
 .DS_Store
 .env
+*.pkl
