@@ -6,6 +6,8 @@ numpy
 
 # Visualization (used during data exploration)
 matplotlib
+streamlit
+plotly
 
 # Machine learning utilities
 scikit-learn
