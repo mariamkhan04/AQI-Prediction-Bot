@@ -31,18 +31,3 @@ jobs:
         run: |
           echo "Starting Daily Feature Pipeline"
           python src/run_feature_pipeline.py
-      
-      - name: Verify Upload on Hopsworks
-        env:
-          HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
-        run: |
-          echo "Verifying Hopsworks Feature Group head/tail..."
-          python - <<'EOF'
-          import hopsworks, os, pandas as pd
-          project = hopsworks.login(api_key_value=os.getenv("HOPSWORKS_API_KEY"))
-          fs = project.get_feature_store()
-          fg = fs.get_feature_group("aqi_features", version=1)
-          df = fg.read()
-          print("\nHead of Feature Group:\n", df.head(3))
-          print("\nTail of Feature Group:\n", df.tail(3))
-          print("\nTotal rows:", len(df))
