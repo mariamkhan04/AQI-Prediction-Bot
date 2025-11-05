@@ -37,3 +37,6 @@ weather_historic_url = (
 RAW_PATH = "data/raw/"
 PROCESSED_PATH = "data/processed"
 HIST_PATH = "data/historical"
+
+import os
+SAVE_LOCAL = os.getenv("SAVE_LOCAL", "false").lower() in ("1", "true", "yes")

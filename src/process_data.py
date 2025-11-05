@@ -1,51 +1,63 @@
 import os
-import json
-import glob
 import pandas as pd
-from config import RAW_PATH, PROCESSED_PATH
+from config import PROCESSED_PATH, SAVE_LOCAL
 
-def process_latest_json():
-    """Convert latest raw JSON (pollutants + weather) to processed CSV"""
-    
-    # Find latest raw combined JSON file
-    files = sorted(glob.glob(f"{RAW_PATH}/raw_combined_*.json"))
-    if not files:
-        print("❌ No raw JSON files found in", RAW_PATH)
-        return
-    
-    latest_file = files[-1]
-    print(f"📂 Using latest file: {os.path.basename(latest_file)}")
 
-    # Load data
-    with open(latest_file, "r") as f:
-        data = json.load(f)
+def process_latest_json(raw_df):
+    """
+    Process the combined air quality + weather dataframe into a structured format.
+    This version no longer reads JSON from disk — it uses the dataframe
+    returned by fetch_api_data() in the automated pipeline.
+    """
 
-    # Extract air quality + weather data
-    aq = data.get("air_quality", {}).get("hourly", {})
-    wx = data.get("weather", {}).get("hourly", {})
+    if raw_df is None or raw_df.empty:
+        raise ValueError("❌ Empty or invalid raw dataframe passed to process_latest_json()")
 
-    if not aq or not wx:
-        print("⚠️ Missing air quality or weather data in JSON.")
-        return
+    # 1. Work on a copy
+    df = raw_df.copy()
 
-    # Convert to DataFrame
-    df_aq = pd.DataFrame(aq)
-    df_wx = pd.DataFrame(wx)
+    # 2. Standardize datetime column
+    if "time" in df.columns and "datetime" not in df.columns:
+        df.rename(columns={"time": "datetime"}, inplace=True)
 
-    # Merge both datasets on 'time'
-    df = pd.merge(df_aq, df_wx, on="time", how="inner")
-    df.rename(columns={"time": "datetime"}, inplace=True)
+    df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
+    df.dropna(subset=["datetime"], inplace=True)
+    df.sort_values("datetime", inplace=True)
+    df.reset_index(drop=True, inplace=True)
 
-    # Save processed raw CSV
-    os.makedirs(PROCESSED_PATH, exist_ok=True)
-    out_file = os.path.join(
-        PROCESSED_PATH,
-        f"processed_{df['datetime'].min()[:10]}.csv"
-    )
+    # 3. column names to lowercase
+    df.columns = df.columns.str.lower()
 
-    df.to_csv(out_file, index=False)
-    print(f"✅ Processed data saved → {out_file}")
-    print(f"📊 Shape: {df.shape}")
+    # 4. Save locally if configured
+    if SAVE_LOCAL:
+        os.makedirs(PROCESSED_PATH, exist_ok=True)
+        out_file = os.path.join(
+            PROCESSED_PATH,
+            f"processed_{df['datetime'].dt.date.min()}.csv"
+        )
+        df.to_csv(out_file, index=False)
+        print(f"✅ Processed data saved → {out_file}")
+    else:
+        print("⚙️ Skipping local save (cloud/CI mode).")
 
+    print(f"📊 Processed DataFrame shape: {df.shape}")
+    return df
+
+
+# --- Run standalone test ---
 if __name__ == "__main__":
-    process_latest_json()
+    import json
+
+    # Example test file 
+    sample_path = os.path.join("data", "raw", "raw_combined_sample.json")
+    if os.path.exists(sample_path):
+        with open(sample_path, "r") as f:
+            sample_data = json.load(f)
+        sample_df = pd.concat([
+            pd.DataFrame(sample_data.get("air_quality", {}).get("hourly", {})),
+            pd.DataFrame(sample_data.get("weather", {}).get("hourly", {}))
+        ], axis=1)
+        processed = process_latest_json(sample_df)
+        print(processed.head())
+    else:
+        print("⚠️ No sample file found for standalone test.")
