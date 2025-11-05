@@ -4,12 +4,13 @@ requests
 pandas
 numpy
 
-# Visualization (used in EDA / data understanding)
+# Visualization (used during data exploration)
 matplotlib
 
 # Machine learning utilities
 scikit-learn
 joblib
+xgboost
 
 # Hopsworks Feature Store SDK
 hopsworks==4.2.9

@@ -1,0 +1,42 @@
+name: Daily Model Training Pipeline
+
+on:
+  schedule:
+    - cron: "45 20 * * *"   # Runs daily 15 mins after feature pipeline
+  workflow_dispatch:         # Allow manual trigger
+
+jobs:
+  train-and-predict:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install hopsworks[python]==4.2.9 xgboost joblib scikit-learn pandas numpy requests python-dotenv
+
+      - name: Run Training Pipeline
+        env:
+          HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
+          SAVE_LOCAL: "false"
+        run: |
+          echo "Starting Model Training..."
+          python src/train_model.py
+          echo "Model Training Completed."
+
+      - name: Run Prediction & Evaluation
+        env:
+          HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
+          SAVE_LOCAL: "false"
+        run: |
+          echo "Starting Prediction & Evaluation..."
+          python src/predict_evaluate.py
