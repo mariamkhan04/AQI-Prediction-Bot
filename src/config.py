@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 LAT = 24.8607   # Karachi latitude
 LON = 67.0011   # Karachi longitude
 
-end_time = datetime.now(datetime.timezone.utc)
+end_time = datetime.now(datetime.astimezone.utc)
 start_time = end_time - timedelta(hours=24)
 
 # Base URLs for latest fetch
