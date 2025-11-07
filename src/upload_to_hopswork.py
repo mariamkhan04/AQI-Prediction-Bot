@@ -77,7 +77,7 @@ def upload_to_hopsworks(df: pd.DataFrame = None):
 
     # 9. Insert into Feature Store 
     print("🚀 Uploading to Hopsworks Feature Store...")
-    fg.insert(df, write_options={"wait_for_job": False, "mode": "append"})
+    fg.insert(df, write_options={"wait_for_job": False})
     print(f"✅ Successfully uploaded {len(df)} rows to Feature Group → '{FEATURE_GROUP_NAME}_v{FEATURE_GROUP_VERSION}'")
 
     # 10. local snapshot
