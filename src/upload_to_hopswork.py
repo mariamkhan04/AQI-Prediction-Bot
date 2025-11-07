@@ -82,7 +82,7 @@ def upload_to_hopsworks(df: pd.DataFrame = None):
     df = df.drop_duplicates(subset=["datetime_str"], keep="last")
     print(f"Removed {before - len(df)} duplicate rows based on 'datetime_str'.")
 
-    fg.insert(df, write_options={"wait_for_job": False})
+    fg.insert(df, write_options={"wait_for_job": False, "append_only": True})
     print(f"✅ Successfully uploaded {len(df)} rows to Feature Group → '{FEATURE_GROUP_NAME}_v{FEATURE_GROUP_VERSION}'")
 
     # 10. local snapshot
