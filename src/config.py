@@ -1,26 +1,26 @@
 from datetime import datetime, timedelta, timezone
+
 LAT = 24.8607   # Karachi latitude
 LON = 67.0011   # Karachi longitude
 
-end_time = datetime.now(timezone.utc)
-start_time = end_time - timedelta(hours=24)
+# Fetch last 24 hours ONLY (historical)
+end_date = (datetime.now(timezone.utc) - timedelta(days=0)).strftime("%Y-%m-%d")
+start_date = (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d")
 
-# Base URLs for latest fetch
 AIR_QUALITY_URL = (
     "https://air-quality-api.open-meteo.com/v1/air-quality"
     f"?latitude={LAT}&longitude={LON}"
-    f"&start={start_time.isoformat(timespec='hours')}Z"
-    f"&end={end_time.isoformat(timespec='hours')}Z"
+    f"&start_date={start_date}&end_date={end_date}"
     "&hourly=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,ozone,sulphur_dioxide"
 )
 
 WEATHER_FORECAST_URL = (
-    "https://api.open-meteo.com/v1/forecast"
+    "https://archive-api.open-meteo.com/v1/archive"
     f"?latitude={LAT}&longitude={LON}"
-    f"&start={start_time.isoformat(timespec='hours')}Z"
-    f"&end={end_time.isoformat(timespec='hours')}Z"
+    f"&start_date={start_date}&end_date={end_date}"
     "&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m"
 )
+
 
 # base urls for historical data
 start_date = "2024-01-01"
