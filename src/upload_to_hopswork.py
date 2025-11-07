@@ -64,7 +64,7 @@ def upload_to_hopsworks(df: pd.DataFrame = None):
 
     # 7. Define Feature Group metadata
     FEATURE_GROUP_NAME = "aqi_features"
-    FEATURE_GROUP_VERSION = 1
+    FEATURE_GROUP_VERSION = 2
 
     # 8. Get or create Feature Group
     fg = fs.get_or_create_feature_group(
@@ -77,12 +77,7 @@ def upload_to_hopsworks(df: pd.DataFrame = None):
 
     # 9. Insert into Feature Store 
     print("🚀 Uploading to Hopsworks Feature Store...")
-    # Remove duplicate datetimes before uploading
-    before = len(df)
-    df = df.drop_duplicates(subset=["datetime_str"], keep="last")
-    print(f"Removed {before - len(df)} duplicate rows based on 'datetime_str'.")
-
-    fg.insert(df, write_options={"wait_for_job": False, "append_only": True})
+    fg.insert(df, write_options={"wait_for_job": True})
     print(f"✅ Successfully uploaded {len(df)} rows to Feature Group → '{FEATURE_GROUP_NAME}_v{FEATURE_GROUP_VERSION}'")
 
     # 10. local snapshot

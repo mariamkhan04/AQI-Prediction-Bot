@@ -69,7 +69,7 @@ api_key = os.getenv("HOPSWORKS_API_KEY")
 try:
     project = hopsworks.login(api_key_value=api_key)
     fs = project.get_feature_store()
-    fg = fs.get_feature_group("aqi_features", version=1)
+    fg = fs.get_feature_group("aqi_features", version=2)
     df = fg.read()
     st.success("✅ Connected to Hopsworks and fetched latest data.")
 except Exception as e:

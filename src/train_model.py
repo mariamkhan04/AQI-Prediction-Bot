@@ -20,7 +20,7 @@ try:
     fs = project.get_feature_store()
     print("✅ Connected to Hopsworks Feature Store")
 
-    fg = fs.get_feature_group("aqi_features", version=1)
+    fg = fs.get_feature_group("aqi_features", version=2)
     df = fg.read()
     print("📥 Data fetched from Hopsworks successfully!")
 except Exception as e:

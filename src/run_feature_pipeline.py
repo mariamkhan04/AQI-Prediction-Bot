@@ -71,7 +71,7 @@ try:
 
         project = hopsworks.login()
         fs = project.get_feature_store()
-        fg = fs.get_feature_group("aqi_features", version=1)
+        fg = fs.get_feature_group("aqi_features", version=2)
 
         df_check = fg.read()  # Read full feature group
         df_check["datetime_str"] = pd.to_datetime(df_check["datetime_str"])
