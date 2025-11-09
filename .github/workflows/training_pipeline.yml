@@ -2,7 +2,7 @@ name: Daily Model Training Pipeline
 
 on:
   schedule:
-    - cron: "45 20 * * *"   # Runs daily 15 mins after feature pipeline (1:45 AM PKT)
+    - cron: "30 3 * * *"   # Runs daily 15 mins after feature pipeline (1:45 AM PKT)
   workflow_dispatch:         # Allow manual trigger from GitHub Actions tab
 
 jobs:

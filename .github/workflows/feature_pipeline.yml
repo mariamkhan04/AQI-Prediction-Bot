@@ -2,7 +2,7 @@ name: Daily Feature Pipeline
 
 on:
   schedule:
-    - cron: "30 20 * * *"  # Runs daily at 1:30 AM Pakistan Time (20:30 UTC)
+    - cron: "10 3 * * *"  # Runs daily at 1:30 AM Pakistan Time (20:30 UTC)
   workflow_dispatch:        # Allows manual trigger from GitHub Actions tab
 
 jobs:
